@@ -10,87 +10,114 @@ class Produk extends ResourceController
 {
     use ResponseTrait;
 
-    // all produk
+    // Ambil Semua Produk jika nilai get kosong
     public function index()
     {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET');
+        header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+
         $model = new ProdukModel();
-        $data = [
-            'status' => TRUE,
-            'data' => $model->orderBy('id', 'DESC')->findAll()
-        ];
+        if (!empty($search)) {
+            $result = $model->like('nama', $search)->orderBy('id', 'DESC')->findAll();
+        } else {
+            $result = $model->orderBy('id', 'DESC')->findAll();
+        }
+
+        if (!empty($result)) {
+            $data = [
+                'status' => true,
+                'data' => $result
+            ];
+        } else {
+            $data = [
+                'status' => false,
+                'message' => 'Barang tidak ditemukan'
+            ];
+        }
         return $this->respond($data);
     }
 
     // create
     public function create()
     {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods:POST");
+        header('Content-Type: application/json');
+
+        $id = $this->request->getPost('id');
+
+        if (!empty($_FILES['image']['tmp_name'])) {
+            $errors = array();
+            $allowed_ext = array('jpg', 'jpeg', 'png',);
+            $file_size = $_FILES['image']['size'];
+            $file_tmp = $_FILES['image']['tmp_name'];
+            //$type = pathinfo($file_tmp, PATHINFO_EXTENSION);
+            $type = 'jpeg';
+            $data = file_get_contents($file_tmp);
+            $tmp = explode('.', $_FILES['image']['name']);
+            $file_ext = end($tmp);
+
+            if (in_array($file_ext, $allowed_ext) === false) {
+                $errors[] = 'Ekstensi file tidak di izinkan';
+                echo json_encode(['status' => false, 'message' => 'Ekstensi file tidak di izinkan']);
+                die();
+            }
+
+            if ($file_size > 2097152) {
+                $errors[] = 'Ukuran file maksimal 2 MB';
+                echo json_encode(['status' => false, 'message' => 'Ukuran file maksimal 2 MB']);
+                die();
+            }
+
+            if (empty($errors)) {
+                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                $data = [
+                    'nama' => $this->request->getPost('nama'),
+                    'harga' => $this->request->getPost('harga'),
+                    'deskripsi' => $this->request->getPost('deskripsi'),
+                    'img' => $base64
+                ];
+            } else {
+                echo json_encode($errors);
+            }
+        } else {
+            $data = [
+                'nama' => $this->request->getPost('nama'),
+                'harga' => $this->request->getPost('harga'),
+                'deskripsi' => $this->request->getPost('deskripsi'),
+                'kategori' => $this->request->getPost('kategori'),
+            ];
+        }
+
         $model = new ProdukModel();
-        $data = [
-            'nama_produk' => $this->request->getVar('nama_produk'),
-            'harga'  => $this->request->getVar('harga'),
-        ];
-
-        $model->insert($data);
-
-        $response = [
-            'status'   => 201,
-            'error'    => null,
-            'messages' => [
-                'success' => 'Data produk berhasil ditambahkan.'
-            ]
-        ];
-
-        return $this->respondCreated($response);
+        if (empty($id)) {
+            $model->insert($data);
+            $msg = "Data barang berhasil ditambahkan";
+        } else {
+            $model->update($id, $data);
+            $msg = "Data barang berhasil diubah";
+        }
+        return $this->response->setJSON(['status' => true, 'message' => $msg]);
     }
 
-    // single produk
     public function show($id = null)
     {
+        header('Access-Control-Allow-Origin: http://127.0.0.1:5500');
+        header('Access-Control-Allow-Methods: GET');
+        header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+
         $model = new ProdukModel();
-        $data = $model->where('id', $id)->first();
+        $data  = [
+            'status' => true,
+            'data' => $model->where('id', $id)->first()
+        ];
+
         if ($data) {
             return $this->respond($data);
         } else {
             return $this->failNotFound('Data tidak ditemukan.');
         }
-    }
-
-    // update
-    public function update($id = null)
-    {
-        $model = new ProdukModel();
-
-        // Ambil data dari permintaan PUT
-        $data = $this->request->getRawInput();
-
-        // Pastikan bahwa ID produk diambil dari parameter URL atau data permintaan
-        $id = $id ?? $data['id'] ?? null;
-
-        // Ambil data yang diperlukan
-        $dataToUpdate = [
-            'nama_produk' => $data['nama_produk'] ?? null,
-            'harga'       => $data['harga'] ?? null,
-        ];
-
-        $result = $model->update($id, $dataToUpdate);
-
-        if ($result) {
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Data produk berhasil diubah.'
-                ]
-            ];
-        } else {
-            $response = [
-                'status'   => 500,
-                'error'    => 'Gagal mengubah data produk.',
-                'messages' => null
-            ];
-        }
-
-        return $this->respond($response);
     }
 
     // delete
