@@ -107,8 +107,7 @@ class Help extends BaseCommand
 	public function run(array $params)
 	{
 		$command = array_shift($params);
-		if (is_null($command))
-		{
+		if (is_null($command)) {
 			$command = 'help';
 		}
 
@@ -117,5 +116,4 @@ class Help extends BaseCommand
 
 		$class->showHelp();
 	}
-
 }

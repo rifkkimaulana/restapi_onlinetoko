@@ -108,8 +108,7 @@ class Namespaces extends BaseCommand
 		$config = new Autoload();
 
 		$tbody = [];
-		foreach ($config->psr4 as $ns => $path)
-		{
+		foreach ($config->psr4 as $ns => $path) {
 			$path = realpath($path) ?? $path;
 
 			$tbody[] = [
@@ -127,5 +126,4 @@ class Namespaces extends BaseCommand
 
 		CLI::table($tbody, $thead);
 	}
-
 }

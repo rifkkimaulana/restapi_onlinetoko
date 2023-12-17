@@ -135,10 +135,8 @@ class ListCommands extends BaseCommand
 		$sorted         = [];
 		$maxTitleLength = 0;
 
-		foreach ($commands as $title => $command)
-		{
-			if (! isset($sorted[$command['group']]))
-			{
+		foreach ($commands as $title => $command) {
+			if (!isset($sorted[$command['group']])) {
 				$sorted[$command['group']] = [];
 			}
 
@@ -150,19 +148,16 @@ class ListCommands extends BaseCommand
 		ksort($sorted);
 
 		// Display it all...
-		foreach ($sorted as $group => $items)
-		{
+		foreach ($sorted as $group => $items) {
 			CLI::newLine();
 			CLI::write($group);
 
-			foreach ($items as $title => $item)
-			{
+			foreach ($items as $title => $item) {
 				$title = $this->padTitle($title, $maxTitleLength, 2, 2);
 
 				$out = CLI::color($title, 'yellow');
 
-				if (isset($item['description']))
-				{
+				if (isset($item['description'])) {
 					$out .= CLI::wrap($item['description'], 125, strlen($title));
 				}
 

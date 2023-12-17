@@ -124,13 +124,11 @@ class CreateMigration extends BaseCommand
 
 		// Write the file out.
 		helper('filesystem');
-		if (! write_file($path, $template))
-		{
+		if (!write_file($path, $template)) {
 			CLI::error(lang('Migrations.writeError', [$path]));
 			return;
 		}
 
 		CLI::write('Created file: ' . CLI::color(str_replace(APPPATH, 'APPPATH/', $path), 'green'));
 	}
-
 }

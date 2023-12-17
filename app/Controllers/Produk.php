@@ -4,16 +4,16 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-use App\Models\ProductModel;
+use App\Models\ProdukModel;
 
-class Product extends ResourceController
+class Produk extends ResourceController
 {
     use ResponseTrait;
 
     // all produk
     public function index()
     {
-        $model = new ProductModel();
+        $model = new ProdukModel();
         $data = [
             'status' => TRUE,
             'data' => $model->orderBy('id', 'DESC')->findAll()
@@ -24,7 +24,7 @@ class Product extends ResourceController
     // create
     public function create()
     {
-        $model = new ProductModel();
+        $model = new ProdukModel();
         $data = [
             'nama_produk' => $this->request->getVar('nama_produk'),
             'harga'  => $this->request->getVar('harga'),
@@ -46,7 +46,7 @@ class Product extends ResourceController
     // single produk
     public function show($id = null)
     {
-        $model = new ProductModel();
+        $model = new ProdukModel();
         $data = $model->where('id', $id)->first();
         if ($data) {
             return $this->respond($data);
@@ -58,7 +58,7 @@ class Product extends ResourceController
     // update
     public function update($id = null)
     {
-        $model = new ProductModel();
+        $model = new ProdukModel();
 
         // Ambil data dari permintaan PUT
         $data = $this->request->getRawInput();
@@ -96,7 +96,7 @@ class Product extends ResourceController
     // delete
     public function delete($id = null)
     {
-        $model = new ProductModel();
+        $model = new ProdukModel();
         $data = $model->where('id', $id)->delete($id);
         if ($data) {
             $model->delete($id);

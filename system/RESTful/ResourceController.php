@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -159,30 +160,23 @@ class ResourceController extends Controller
 	public function setModel($which = null)
 	{
 		// save what we have been given
-		if (! empty($which))
-		{
-			if (is_object($which))
-			{
+		if (!empty($which)) {
+			if (is_object($which)) {
 				$this->model = $which;
-			}
-			else
-			{
+			} else {
 				$this->modelName = $which;
 			}
 		}
 
 		// make a model object if needed
-		if (empty($this->model) && ! empty($this->modelName))
-		{
-			if (class_exists($this->modelName))
-			{
+		if (empty($this->model) && !empty($this->modelName)) {
+			if (class_exists($this->modelName)) {
 				$this->model = new $this->modelName;
 			}
 		}
 
 		// determine model name if needed
-		if (empty($this->modelName) && ! empty($this->model))
-		{
+		if (empty($this->modelName) && !empty($this->model)) {
 			$this->modelName = get_class($this->model);
 		}
 	}
@@ -194,10 +188,8 @@ class ResourceController extends Controller
 	 */
 	public function setFormat(string $format = 'json')
 	{
-		if (in_array($format, ['json', 'xml']))
-		{
+		if (in_array($format, ['json', 'xml'])) {
 			$this->format = $format;
 		}
 	}
-
 }

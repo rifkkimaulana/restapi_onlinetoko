@@ -34,7 +34,7 @@ $routes->setAutoRoute(true);
 # $routes->get('/', 'Home::index');
 
 // Rest API Routes
-$routes->resource('product');
+$routes->resource('produk');
 
 /**
  * --------------------------------------------------------------------

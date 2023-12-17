@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -129,8 +130,7 @@ class Serve extends BaseCommand
 	public function run(array $params)
 	{
 		// Valid PHP Version?
-		if (phpversion() < $this->minPHPVersion)
-		{
+		if (phpversion() < $this->minPHPVersion) {
 			// @codeCoverageIgnoreStart
 			die('Your PHP version must be ' . $this->minPHPVersion .
 				' or higher to run CodeIgniter. Current version: ' . phpversion());
@@ -157,12 +157,10 @@ class Serve extends BaseCommand
 		// to ensure our environment is set and it simulates basic mod_rewrite.
 		passthru($php . ' -S ' . $host . ':' . $port . ' -t ' . $docroot . ' ' . $rewrite, $status);
 
-		if ($status && $this->portOffset < $this->tries)
-		{
+		if ($status && $this->portOffset < $this->tries) {
 			$this->portOffset += 1;
 
 			$this->run($params);
 		}
 	}
-
 }
