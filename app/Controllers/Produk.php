@@ -10,6 +10,50 @@ class Produk extends ResourceController
 {
     use ResponseTrait;
 
+    // New Scrip Lazy
+    public function limit_produk()
+    {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: POST");
+        header('Content-Type: application/json');
+
+        $limit = $this->request->getPost('limit');
+        $start = $this->request->getPost('start');
+        $search = $this->request->getPost('search');
+
+        $produkModel = new ProdukModel();
+        $produk = $produkModel->fetch_data($limit, $start, $search);
+
+        $rowCount = $produkModel->countAllResults();
+
+        if ($rowCount == 0 && $start == 0) {
+            $result = 0;
+        } else {
+            $result = 1;
+        }
+
+        if ($rowCount > 0) {
+            return $this->respond(
+                [
+                    'status' => TRUE,
+                    'data' => $produk->getResult(),
+                    'result' => $result,
+                ],
+                200
+            );
+        } else {
+            return $this->respond(
+                [
+                    'status' => FALSE,
+                    'message' => 'Barang tidak ditemukan',
+                    'result' => $result,
+                ],
+                200
+            );
+        }
+    }
+
+
     // Ambil Semua Produk jika nilai get kosong
     public function index()
     {
@@ -21,7 +65,7 @@ class Produk extends ResourceController
         if (!empty($search)) {
             $result = $model->like('nama', $search)->orderBy('id', 'DESC')->findAll();
         } else {
-            $result = $model->orderBy('id', 'DESC')->findAll();
+            $result = $model->orderBy('id', 'DESC')->findAll(10);
         }
 
         if (!empty($result)) {
@@ -76,7 +120,8 @@ class Produk extends ResourceController
                     'nama' => $this->request->getPost('nama'),
                     'harga' => $this->request->getPost('harga'),
                     'deskripsi' => $this->request->getPost('deskripsi'),
-                    'img' => $base64
+                    'img' => $base64,
+                    'kategori' => $this->request->getPost('kategori'),
                 ];
             } else {
                 echo json_encode($errors);
