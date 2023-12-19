@@ -16,13 +16,17 @@ class ProdukModel extends Model
         'kategori'
     ];
 
-    public function fetch_data($limit, $start, $search)
+    public function fetch_data($limit, $start, $search, $kategori)
     {
         $builder = $this->db->table($this->table);
         $builder->select('*');
 
         if (!empty($search)) {
             $builder->like('nama', $search);
+        }
+
+        if (!empty($kategori)) {
+            $builder->where('kategori', $kategori);
         }
 
         $builder->limit($limit, $start);

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\KategoriModel;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ProdukModel;
@@ -20,9 +21,18 @@ class Produk extends ResourceController
         $limit = $this->request->getPost('limit');
         $start = $this->request->getPost('start');
         $search = $this->request->getPost('search');
+        $kategori = $this->request->getPost('kategori');
+
+        if (!empty($kategori)) {
+            $kategoriModel = new KategoriModel();
+            $kategoriNama = $kategoriModel->where('id', $kategori)->first();
+            $namaKategori = $kategoriNama['nama'];
+        } else {
+            $namaKategori = '';
+        }
 
         $produkModel = new ProdukModel();
-        $produk = $produkModel->fetch_data($limit, $start, $search);
+        $produk = $produkModel->fetch_data($limit, $start, $search, $namaKategori);
 
         $rowCount = $produkModel->countAllResults();
 
