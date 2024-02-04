@@ -35,7 +35,10 @@ $routes->setAutoRoute(true);
 
 // Rest API Routes
 $routes->resource('produk');
+
+// Routes Kategori
 $routes->resource('kategori');
+$routes->resource('rental');
 
 /**
  * --------------------------------------------------------------------
